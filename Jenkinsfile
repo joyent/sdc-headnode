@@ -8,7 +8,7 @@
  * Copyright 2020 Joyent, Inc.
  */
 
-@Library('jenkins-joylib@v1.0.4') _
+@Library('jenkins-joylib@v1.0.6') _
 
 pipeline {
 
@@ -76,9 +76,12 @@ pipeline {
         stage('check') {
             agent {
                 node {
-                    label '!virt:kvm && fs:pcfs && fs:ufs && jenkins_agent:2 && pkgsrc_arch:multiarch'
+                    label '!virt:kvm && fs:pcfs && fs:ufs && jenkins_agent:3 && pkgsrc_arch:multiarch'
                     customWorkspace "workspace/headnode-${BRANCH_NAME}-check"
                 }
+            }
+            tools {
+                nodejs 'sdcnode-v6-zone'
             }
             steps{
                 sh('''
@@ -111,7 +114,7 @@ make check
         stage('default') {
             agent {
                 node {
-                    label '!virt:kvm && fs:pcfs && fs:ufs && jenkins_agent:2 && pkgsrc_arch:multiarch'
+                    label '!virt:kvm && fs:pcfs && fs:ufs && jenkins_agent:3 && pkgsrc_arch:multiarch'
                     customWorkspace "workspace/headnode-${BRANCH_NAME}-default"
                 }
             }
@@ -126,6 +129,9 @@ make check
                     branch 'master'
                     triggeredBy cause: 'UserIdCause'
                 }
+            }
+            tools {
+                nodejs 'sdcnode-v6-zone'
             }
             steps {
                 sh('git clean -fdx')
@@ -168,7 +174,7 @@ make print-STAMP all publish bits-upload-latest
     stage('debug') {
             agent {
                 node {
-                    label '!virt:kvm && fs:pcfs && fs:ufs && jenkins_agent:2 && pkgsrc_arch:multiarch'
+                    label '!virt:kvm && fs:pcfs && fs:ufs && jenkins_agent:3 && pkgsrc_arch:multiarch'
                     customWorkspace "workspace/headnode-${BRANCH_NAME}-debug"
                 }
             }
@@ -179,6 +185,9 @@ make print-STAMP all publish bits-upload-latest
                     branch 'master'
                     triggeredBy cause: 'UserIdCause'
                 }
+            }
+            tools {
+                nodejs 'sdcnode-v6-zone'
             }
             steps {
                 sh('git clean -fdx')
